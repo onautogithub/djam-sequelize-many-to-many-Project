@@ -217,3 +217,11 @@ git remote add origin https://github.com/onautogithub/djam-sequelize-many-to-man
 git push -u origin main
 
 -- Now go on with your project
+
+
+
+npx sequelize model:create --name classrooms --attributes class_name:string
+npx sequelize model:create --name students --attributes classroom_id:integer,student_name:string
+npx sequelize model:create --name lecturers --attributes lecturer_name:string
+npx sequelize model:create --name courses --attributes lecturer_id:integer,course_name:string
+npx sequelize model:create --name studentcourse --attributes student_id:integer,course_id:integer

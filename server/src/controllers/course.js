@@ -1,21 +1,21 @@
-const Course = require('../models').Course
-const Student = require('../models').Student
-const Lecturer = require('../models').Lecturer
+const courses = require('../models').courses
+const students = require('../models').students
+const lecturers = require('../models').lecturers
 
 module.exports = {
   list (req, res) {
-    return Course
+    return courses
       .findAll({
         include: [{
-          model: Student,
+          model: students,
           as: 'students'
         }, {
-          model: Lecturer,
-          as: 'lecturer'
+          model: lecturers,
+          as: 'lecturers'
         }],
         order: [
           ['createdAt', 'DESC'],
-          [{ model: Student, as: 'students' }, 'createdAt', 'DESC']
+          [{ model: students, as: 'students' }, 'createdAt', 'DESC']
         ]
       })
       .then((courses) => res.status(200).send(courses))
@@ -23,67 +23,67 @@ module.exports = {
   },
 
   getById (req, res) {
-    return Course
+    return courses
       .findByPk(req.params.id, {
         include: [{
-          model: Course,
-          as: 'course'
+          model: courses,
+          as: 'courses'
         }]
       })
-      .then((course) => {
-        if (!course) {
+      .then((courses) => {
+        if (!courses) {
           return res.status(404).send({
             message: 'Course Not Found'
           })
         }
-        return res.status(200).send(course)
+        return res.status(200).send(courses)
       })
       .catch((error) => res.status(400).send(error))
   },
 
   add (req, res) {
-    return Course
+    return courses
       .create({
         course_name: req.body.course_name
       })
-      .then((course) => res.status(201).send(course))
+      .then((courses) => res.status(201).send(courses))
       .catch((error) => res.status(400).send(error))
   },
 
   update (req, res) {
-    return Course
+    return courses
       .findByPk(req.params.id, {
         include: [{
-          model: Course,
-          as: 'course'
+          model: courses,
+          as: 'courses'
         }]
       })
-      .then(course => {
-        if (!course) {
+      .then(courses => {
+        if (!courses) {
           return res.status(404).send({
             message: 'Course Not Found'
           })
         }
-        return course
+        return courses
           .update({
-            course_name: req.body.course_name || classroom.course_name
+            course_name: req.body.course_name || courses.course_name
           })
-          .then(() => res.status(200).send(course))
+          .then(() => res.status(200).send(courses))
           .catch((error) => res.status(400).send(error))
       })
       .catch((error) => res.status(400).send(error))
   },
 
   delete (req, res) {
-    return Course
+    return courses
       .findByPk(req.params.id)
-      .then(course => {
-        if (!course) {
+      .then(courses => {
+        if (!courses) {
           return res.status(400).send({
-            message: 'Course Not Found'
+            message: 'courses Not Found'
           })
         }
-        return course
+        return courses
           .destroy()
           .then(() => res.status(204).send())
           .catch((error) => res.status(400).send(error))

@@ -1,31 +1,17 @@
-const Classroom = require('../models').Classroom
-const Student = require('../models').Student
-// const fs = require('fs')
-
-// const Lecturer = require('../models/Lecturer.js')
-// const Course = require('../models/course.js')
-// const Student = require('../models/student.js')
-
-// const path = require('path')
-// const configPath = path.join(__dirname, '../../', 'config')
-// console.log(path.join(configPath, 'config.json'))
-// const Sequelize = require('sequelize')
-// const sequelize = require(path.join(configPath, 'config.json')).sequelize
-
-// const Classroom = require('../models/classroom.js')(sequelize, Sequelize.DataTypes)
-// const Student = require('../models/student.js')
+const classrooms = require('../models').classrooms
+const students = require('../models').students
 
 module.exports = {
   list (req, res) {
-    return Classroom
+    return classrooms
       .findAll({
         include: [{
-          model: Student,
+          model: students,
           as: 'students'
         }],
         order: [
           ['createdAt', 'DESC'],
-          [{ model: Student, as: 'students' }, 'createdAt', 'DESC']
+          [{ model: students, as: 'students' }, 'createdAt', 'DESC']
         ]
       })
       .then((classrooms) => res.status(200).send(classrooms))
@@ -33,20 +19,20 @@ module.exports = {
   },
 
   getById (req, res) {
-    return Classroom
+    return classrooms
       .findByPk(req.params.id, {
         include: [{
-          model: Student,
+          model: students,
           as: 'students'
         }]
       })
-      .then((classroom) => {
-        if (!classroom) {
+      .then((classrooms) => {
+        if (!classrooms) {
           return res.status(404).send({
-            message: 'Classroom Not Found'
+            message: 'classrooms Not Found'
           })
         }
-        return res.status(200).send(classroom)
+        return res.status(200).send(classrooms)
       })
       .catch((error) => {
         console.log(error)
@@ -55,48 +41,48 @@ module.exports = {
   },
 
   add (req, res) {
-    return Classroom
+    return classrooms
       .create({
         class_name: req.body.class_name
       })
-      .then((classroom) => res.status(201).send(classroom))
+      .then((classrooms) => res.status(201).send(classrooms))
       .catch((error) => res.status(400).send(error))
   },
 
   update (req, res) {
-    return Classroom
+    return classrooms
       .findByPk(req.params.id, {
         include: [{
-          model: Student,
+          model: students,
           as: 'students'
         }]
       })
-      .then(classroom => {
-        if (!classroom) {
+      .then(classrooms => {
+        if (!classrooms) {
           return res.status(404).send({
-            message: 'Classroom Not Found'
+            message: 'classrooms Not Found'
           })
         }
-        return classroom
+        return classrooms
           .update({
-            class_name: req.body.class_name || classroom.class_name
+            class_name: req.body.class_name || classrooms.class_name
           })
-          .then(() => res.status(200).send(classroom))
+          .then(() => res.status(200).send(classrooms))
           .catch((error) => res.status(400).send(error))
       })
       .catch((error) => res.status(400).send(error))
   },
 
   delete (req, res) {
-    return Classroom
+    return classrooms
       .findByPk(req.params.id)
-      .then(classroom => {
-        if (!classroom) {
+      .then(classrooms => {
+        if (!classrooms) {
           return res.status(400).send({
             message: 'Classroom Not Found'
           })
         }
-        return classroom
+        return classrooms
           .destroy()
           .then(() => res.status(204).send())
           .catch((error) => res.status(400).send(error))
@@ -104,19 +90,19 @@ module.exports = {
       .catch((error) => res.status(400).send(error))
   },
 
-  addWithStudents (req, res) {
-    return Classroom
+  addWithstudent (req, res) {
+    return classrooms
       .create({
         class_name: req.body.class_name,
-        students: req.body.students
+        student_name: req.body.student_name
       },
       {
         include: [{
-          model: Student,
+          model: students,
           as: 'students'
         }]
       })
-      .then((classroom) => res.status(201).send(classroom))
+      .then((classrooms) => res.status(201).send(classrooms))
       .catch((error) => res.status(400).send(error))
   }
 }
